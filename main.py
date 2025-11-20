@@ -15,18 +15,19 @@ from msi_garnet_caches import MyCacheSystem
 
 from env import *
 
+def collect_stats():
+    raise NotImplementedError
+
 def simulate(
     # applications
     system_application: str = "GeMM",
     # cpu/cache params
-    system_cpu_num: int = 4,
-    system_cache_line_bytes: int = 64,
+    system_cpu_num: int = 8,
+    system_cache_line_bytes: int = 128,
     # network params
     system_network_topology: str = "all2all",
-    system_network_flit_size: int = 1,
+    system_network_flit_size: int = 16,
     system_network_hop_latency: int = 1,
-
-
 ):
     # create the system we are going to simulate
     system = System()
