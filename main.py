@@ -12,18 +12,27 @@ from common.FileSystemConfig import config_filesystem
 # of the MSI protocol
 # from msi_caches import MyCacheSystem
 from msi_garnet_caches import MyCacheSystem
-
+import shutil
 from env import *
 
-def collect_stats():
-    raise NotImplementedError
+def collect_stats(new_name: str = "default"):
+    source_path = M5_OUT_STATS_PATH
+    destination_path = os.path.join(GENERATED_DIR, new_name)
+    os.makedirs(os.path.dirname(destination_path), exist_ok=True)
+    
+    try:
+        shutil.move(source_path, destination_path)
+        print(f"move: {source_path} -> {destination_path}")
+            
+    except Exception as e:
+        print(f"fail to move: {e}")
 
 def simulate(
     # applications
     system_application: str = "GeMM",
     # cpu/cache params
     system_cpu_num: int = 8,
-    system_cache_line_bytes: int = 128,
+    system_cache_line_bytes: int = 64,
     # network params
     system_network_topology: str = "all2all",
     system_network_flit_size: int = 16,
@@ -113,5 +122,10 @@ def simulate(
     print("Beginning simulation!")
     exit_event = m5.simulate()
     print(f"Exiting @ tick {m5.curTick()} because {exit_event.getCause()}")
+
+    # move stats file
+    collect_stats(
+        "-".join(["stats",system_application, str(system_cpu_num), str(system_cache_line_bytes), system_network_topology, str(system_network_flit_size), str(system_network_hop_latency)])+".txt"
+    )
 
 simulate()
