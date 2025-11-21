@@ -18,8 +18,8 @@ def run_single_test(application, cpu_num, topology, hop_latency):
 
 def main():
 
-    for application in ["Opt_GeMM"]:# ["bad_cache", "GeMM"]:
-        for hop_latency in [1,]:# 2, 4, 8]:
+    for application in ["Transpose_GeMM", "GeMM", "bad_cache"]:
+        for hop_latency in [1, 2, 4, 8]:
             run_single_test(application, 1, "all2all", hop_latency)
             run_single_test(application, 4, "mesh", hop_latency)
 

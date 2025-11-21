@@ -95,18 +95,18 @@ def simulate(
             "Bad_cache/bin/x86/linux/Bad_cache"
         )
         cmd = [binary, "1000", "100"]
-    elif system_application == "producer_consumer":
-        binary = os.path.join(
-            APPLICATIONS_DIR,
-            "producer_consumer/bin/x86/linux/producer_consumer"
-        )
-        cmd = [binary]
     elif system_application == "Transpose_GeMM":
         binary = os.path.join(
             APPLICATIONS_DIR,
             "Transpose_GeMM/bin/x86/linux/Transpose_GeMM"
         )
         cmd = [binary, "64", "64", "64"]
+    elif system_application == "Matrix_symm":
+        binary = os.path.join(
+            APPLICATIONS_DIR,
+            "Matrix_symm/bin/x86/linux/Matrix_symm"
+        )
+        cmd = [binary, "128"]
     else:
         raise Exception("invalid application")
 
