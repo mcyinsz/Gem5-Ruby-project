@@ -5,7 +5,8 @@ import m5
 from m5.objects import *
 
 # Needed for running C++ threads
-m5.util.addToPath("../../")
+from env import *
+m5.util.addToPath(M5_CONFIGS_DIR)
 from common.FileSystemConfig import config_filesystem
 
 # You can import ruby_caches_MI_example to use the MI_example protocol instead
@@ -13,7 +14,7 @@ from common.FileSystemConfig import config_filesystem
 # from msi_caches import MyCacheSystem
 from msi_garnet_caches import MyCacheSystem
 import shutil
-from env import *
+import argparse
 
 def collect_stats(new_name: str = "default"):
     source_path = M5_OUT_STATS_PATH
@@ -29,9 +30,9 @@ def collect_stats(new_name: str = "default"):
 
 def simulate(
     # applications
-    system_application: str = "GeMM",
+    system_application: str = "bad_cache",
     # cpu/cache params
-    system_cpu_num: int = 8,
+    system_cpu_num: int = 4,
     system_cache_line_bytes: int = 64,
     # network params
     system_network_topology: str = "all2all",
@@ -52,7 +53,7 @@ def simulate(
     system.mem_ranges = [AddrRange("8192MiB")]  # Create an address range
 
     # Create a pair of simple CPUs
-    system.cpu = [X86TimingSimpleCPU() for i in range(system_cpu_num)]
+    system.cpu = [X86O3CPU() for i in range(system_cpu_num)] # X86TimingSimpleCPU()
 
     # Create a DDR3 memory controller and connect it to the membus
     system.mem_ctrl = MemCtrl()
@@ -87,13 +88,25 @@ def simulate(
             APPLICATIONS_DIR,
             "threads/bin/x86/linux/threads"
         )
-        cmd = [binary, "1000"]
+        cmd = [binary, "100000"]
     elif system_application == "bad_cache":
         binary = os.path.join(
             APPLICATIONS_DIR,
             "Bad_cache/bin/x86/linux/Bad_cache"
         )
         cmd = [binary, "1000", "100"]
+    elif system_application == "producer_consumer":
+        binary = os.path.join(
+            APPLICATIONS_DIR,
+            "producer_consumer/bin/x86/linux/producer_consumer"
+        )
+        cmd = [binary]
+    elif system_application == "Transpose_GeMM":
+        binary = os.path.join(
+            APPLICATIONS_DIR,
+            "Transpose_GeMM/bin/x86/linux/Transpose_GeMM"
+        )
+        cmd = [binary, "64", "64", "64"]
     else:
         raise Exception("invalid application")
 
@@ -128,4 +141,24 @@ def simulate(
         "-".join(["stats",system_application, str(system_cpu_num), str(system_cache_line_bytes), system_network_topology, str(system_network_flit_size), str(system_network_hop_latency)])+".txt"
     )
 
-simulate()
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--application", type=str, default="threads")
+    parser.add_argument("--cpu-num", type=int, default=1) 
+    parser.add_argument("--cacheline-byte", type=int, default=64)
+    parser.add_argument("--topology", type=str, default="all2all")
+    parser.add_argument("--flit-size", type=int, default=16)
+    parser.add_argument("--hop-latency", type=int, default=1)
+    args = parser.parse_args()
+    
+    simulate(
+        system_application=args.application,
+        system_cpu_num=args.cpu_num,
+        system_cache_line_bytes=args.cacheline_byte,
+        system_network_topology=args.topology,
+        system_network_flit_size=args.flit_size,
+        system_network_hop_latency=args.hop_latency
+    )
+
+main()
