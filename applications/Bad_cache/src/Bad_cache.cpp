@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <vector>
+#include <gem5/m5ops.h> 
 
 using namespace std;
 
@@ -90,7 +91,7 @@ int main(int argc, char *argv[])
     thread **threads = new thread*[cpus];
 
     cout << "Starting race condition simulation..." << endl;
-
+    m5_dump_reset_stats(0, 0);
     // 启动工作线程
     for (int i = 0; i < cpus - 1; i++) {
         threads[i] = new thread(race_worker, shared_data, counters, i, cpus, data_size, iterations);
@@ -104,6 +105,7 @@ int main(int argc, char *argv[])
     for (int i = 0; i < cpus - 1; i++) {
         threads[i]->join();
     }
+    m5_dump_reset_stats(0, 0);
 
     delete[] threads;
 

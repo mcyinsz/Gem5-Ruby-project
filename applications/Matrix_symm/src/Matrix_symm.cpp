@@ -2,6 +2,7 @@
 #include <thread>
 #include <vector>
 #include <cmath>
+#include <gem5/m5ops.h> 
 
 using namespace std;
 
@@ -152,7 +153,7 @@ int main(int argc, char *argv[])
     threads.reserve(cpus - 1);
 
     cout << "Starting matrix symmetrization..." << endl;
-
+    m5_dump_reset_stats(0, 0);
     // 启动工作线程
     for (int i = 0; i < cpus - 1; i++) {
         // 可以选择使用基本版本或分块版本
@@ -169,6 +170,7 @@ int main(int argc, char *argv[])
     for (auto &t : threads) {
         t.join();
     }
+    m5_dump_reset_stats(0, 0);
 
     // 验证结果
     if (validate_symmetric(C, N)) {

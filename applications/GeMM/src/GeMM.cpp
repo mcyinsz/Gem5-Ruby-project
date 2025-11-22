@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <vector>
+#include <gem5/m5ops.h> 
 
 using namespace std;
 
@@ -100,6 +101,7 @@ int main(int argc, char *argv[])
     thread **threads = new thread*[cpus];
 
     cout << "Starting matrix multiplication..." << endl;
+    m5_dump_reset_stats(0, 0);
 
     // Launch worker threads
     for (int i = 0; i < cpus - 1; i++) {
@@ -114,6 +116,7 @@ int main(int argc, char *argv[])
     for (int i = 0; i < cpus - 1; i++) {
         threads[i]->join();
     }
+    m5_dump_reset_stats(0, 0);
 
     delete[] threads;
 

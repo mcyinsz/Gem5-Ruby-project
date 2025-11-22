@@ -107,6 +107,12 @@ def simulate(
             "Matrix_symm/bin/x86/linux/Matrix_symm"
         )
         cmd = [binary, "128"]
+    elif system_application == "FFT":
+        binary = os.path.join(
+            APPLICATIONS_DIR,
+            "FFT/bin/x86/linux/FFT"
+        )
+        cmd = [binary]
     else:
         raise Exception("invalid application")
 
