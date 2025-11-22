@@ -34,6 +34,7 @@ def simulate(
     # cpu/cache params
     system_cpu_num: int = 4,
     system_cache_line_bytes: int = 64,
+    system_cache_size_kB: int = 16,
     # network params
     system_network_topology: str = "all2all",
     system_network_flit_size: int = 16,
@@ -72,7 +73,8 @@ def simulate(
         [system.mem_ctrl],
         network_topology=system_network_topology,
         network_flit_size=system_network_flit_size,
-        network_hop_latency=system_network_hop_latency
+        network_hop_latency=system_network_hop_latency,
+        cache_size=system_cache_size_kB
     )
 
     # Run application and use the compiled ISA to find the binary
@@ -82,7 +84,7 @@ def simulate(
             APPLICATIONS_DIR,
             "GeMM/bin/x86/linux/GeMM"
         )
-        cmd = [binary, "64", "64", "64"]
+        cmd = [binary, "128", "128", "128"]
     elif system_application == "threads":
         binary = os.path.join(
             APPLICATIONS_DIR,
@@ -106,7 +108,7 @@ def simulate(
             APPLICATIONS_DIR,
             "Matrix_symm/bin/x86/linux/Matrix_symm"
         )
-        cmd = [binary, "128"]
+        cmd = [binary, "1024"]
     elif system_application == "FFT":
         binary = os.path.join(
             APPLICATIONS_DIR,
@@ -156,6 +158,7 @@ def main():
     parser.add_argument("--topology", type=str, default="all2all")
     parser.add_argument("--flit-size", type=int, default=16)
     parser.add_argument("--hop-latency", type=int, default=1)
+    parser.add_argument("--cache-size", type=int, default=16)
     args = parser.parse_args()
     
     simulate(
@@ -164,7 +167,8 @@ def main():
         system_cache_line_bytes=args.cacheline_byte,
         system_network_topology=args.topology,
         system_network_flit_size=args.flit_size,
-        system_network_hop_latency=args.hop_latency
+        system_network_hop_latency=args.hop_latency,
+        system_cache_size_kB=args.cache_size
     )
 
 main()

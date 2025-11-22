@@ -184,7 +184,7 @@ void serial_fft_ref(vector<Complex>& data) {
 
 int main() {
     // 【重要建议】增大 N，让计算时间大于同步时间，减少屏障压力
-    const int N = 128; 
+    const int N = 256; 
     
     cout << "FFT Test with N = " << N << endl;
     

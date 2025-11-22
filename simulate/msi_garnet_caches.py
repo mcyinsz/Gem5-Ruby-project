@@ -61,7 +61,9 @@ class MyCacheSystem(RubySystem):
         # network params
         network_topology: str = "all2all",
         network_flit_size: int = 16,
-        network_hop_latency: int = 1
+        network_hop_latency: int = 1,
+        # cache params
+        cache_size: int = 16
     ):
         """Set up the Ruby cache subsystem with Garnet network."""
         # Ruby's global network - now using Garnet
@@ -79,7 +81,7 @@ class MyCacheSystem(RubySystem):
         self.network.number_of_virtual_networks = 3
 
         # Create controllers
-        self.controllers = [L1Cache(system, self, cpu) for cpu in cpus] + [
+        self.controllers = [L1Cache(system, self, cpu, cache_size) for cpu in cpus] + [
             DirController(self, system.mem_ranges, mem_ctrls)
         ]
 
@@ -124,12 +126,12 @@ class L1Cache(MSI_L1Cache_Controller):
         cls._version += 1
         return cls._version - 1
 
-    def __init__(self, system, ruby_system, cpu):
+    def __init__(self, system, ruby_system, cpu, cache_size):
         super().__init__()
 
         self.version = self.versionCount()
         self.cacheMemory = RubyCache(
-            size="16KiB",
+            size=str(cache_size)+"KiB",
             assoc=8,
             start_index_bit=self.getBlockSizeBits(system),
         )
