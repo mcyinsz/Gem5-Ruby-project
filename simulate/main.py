@@ -102,7 +102,7 @@ def simulate(
             APPLICATIONS_DIR,
             "Transpose_GeMM/bin/x86/linux/Transpose_GeMM"
         )
-        cmd = [binary, "64", "64", "64"]
+        cmd = [binary, "128", "128", "128"]
     elif system_application == "Matrix_symm":
         binary = os.path.join(
             APPLICATIONS_DIR,
@@ -146,7 +146,7 @@ def simulate(
 
     # move stats file
     collect_stats(
-        "-".join(["stats",system_application, str(system_cpu_num), str(system_cache_line_bytes), system_network_topology, str(system_network_flit_size), str(system_network_hop_latency)])+".txt"
+        "-".join(["stats",system_application, str(system_cpu_num), str(system_cache_line_bytes), str(system_cache_size_kB), system_network_topology, str(system_network_flit_size), str(system_network_hop_latency)])+".txt"
     )
 
 

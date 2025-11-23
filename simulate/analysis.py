@@ -9,7 +9,7 @@ import datetime
 def parse_filename(filename):
     """
     从文件名解析参数信息
-    格式: stats-<application>-<cpu_num>-<cacheline_size_bytes>-<network_topology>-<network_flit_size>-<network_hop_latency>.txt
+    格式: stats-<application>-<cpu_num>-<cacheline_size_bytes>-<cache_size_kB>-<network_topology>-<network_flit_size>-<network_hop_latency>.txt
     """
     # 移除文件扩展名
     basename = os.path.basename(filename).replace('.txt', '')
@@ -26,9 +26,10 @@ def parse_filename(filename):
             "Application": parts[1],
             "CPU_Num": int(parts[2]),
             "Cacheline_Size_Bytes": int(parts[3]),
-            "Network_Topology": parts[4],
-            "Network_Flit_Size": int(parts[5]),
-            "Network_Hop_Latency": int(parts[6])
+            "Cachesize_kB": int(parts[4]),
+            "Network_Topology": parts[5],
+            "Network_Flit_Size": int(parts[6]),
+            "Network_Hop_Latency": int(parts[7])
         }
         return params
     except (ValueError, IndexError) as e:
@@ -248,7 +249,7 @@ def main():
         return
 
     # 确定列顺序 - 将文件名参数放在前面
-    filename_cols = ["Filename", "Application", "CPU_Num", "Cacheline_Size_Bytes", 
+    filename_cols = ["Filename", "Application", "CPU_Num", "Cacheline_Size_Bytes", "Cachesize_kB",
                      "Network_Topology", "Network_Flit_Size", "Network_Hop_Latency"]
     
     fixed_stats_cols = ["SimSeconds", "Total_Insts", "AvgIPC", "LoadBalance", "Contention_Intensity", 

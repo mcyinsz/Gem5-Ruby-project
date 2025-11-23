@@ -20,24 +20,26 @@ def run_single_test(application, cpu_num, topology, hop_latency, cacheline_byte,
 
 def main():
 
-    for application in [ "FFT", "bad_cache"]: #, "Transpose_GeMM", "Matrix_symm"]:
+    for application in [ "FFT", "bad_cache", "Transpose_GeMM", "Matrix_symm"]:
         
         # 1. scale
-        for cpu_num in [1,2,4]:
+        for cpu_num in [8]:
             run_single_test(application, cpu_num, "mesh", 1, 64, 16)
             run_single_test(application, cpu_num, "all2all", 1, 64, 16)
 
-        # 2. slow down
-        for hop_latency in [1, 2, 4]:
-            run_single_test(application, 4, "mesh", hop_latency, 64, 16)
+        # # 2. slow down
+        # for hop_latency in [8]:
+        #     if application == "FFT":
+        #         continue
+        #     run_single_test(application, 4, "mesh", hop_latency, 64, 16)
 
-        # 3. cacheline size
-        for cacheline_size in [32, 64, 128, 256]:
-            run_single_test(application, 4, "mesh", 1, cacheline_size, 16)
+        # # 3. cacheline size
+        # for cacheline_size in [32, 64, 128, 256]:
+        #     run_single_test(application, 4, "mesh", 1, cacheline_size, 16)
 
-        # 4. data reuse
-        for cache_size_kB in [4, 64, 256]:
-            run_single_test(application, 4, "mesh", 1, 64, cache_size_kB)
+        # # 4. data reuse
+        # for cache_size_kB in [4, 64, 256]:
+        #     run_single_test(application, 4, "mesh", 1, 64, cache_size_kB)
 
 if __name__ == "__main__":
     main()

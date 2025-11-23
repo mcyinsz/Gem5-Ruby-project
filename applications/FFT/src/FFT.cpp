@@ -12,12 +12,19 @@ using namespace std;
 
 typedef complex<double> Complex;
 
+#ifdef __cpp_lib_hardware_interference_size
+    constexpr std::size_t CACHE_LINE_SIZE = std::hardware_destructive_interference_size;
+#else
+    // 默认为 128，足以覆盖大多数架构 (x86: 64, Apple/ARM: 128)
+    constexpr std::size_t CACHE_LINE_SIZE = 128;
+#endif
+
 // 【核心修改】使用结构体并强制对齐，解决伪共享(False Sharing)问题
 // 确保 counter 和 generation 位于不同的 Cache Line (64字节)
-struct alignas(64) PaddedAtomicInt {
+struct alignas(CACHE_LINE_SIZE) PaddedAtomicInt {
     std::atomic<int> val;
     // 填充字节，确保占据整个缓存行，防止相邻变量由于预取等机制产生干扰
-    char pad[64 - sizeof(std::atomic<int>)]; 
+    char pad[CACHE_LINE_SIZE - sizeof(std::atomic<int>)]; 
     
     PaddedAtomicInt() : val(0) {}
 };
@@ -184,7 +191,7 @@ void serial_fft_ref(vector<Complex>& data) {
 
 int main() {
     // 【重要建议】增大 N，让计算时间大于同步时间，减少屏障压力
-    const int N = 256; 
+    const int N = 4096; 
     
     cout << "FFT Test with N = " << N << endl;
     
